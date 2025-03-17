@@ -8,10 +8,10 @@ The associated preprint will be added to the repository once it is published.
 
 ### Contents:
 - [Environment setup](#environment-setup)
-- [Simulation](#simulation)
-- [Human Microbiome Project (HMP) dataset](#human-microbiome-project-hmp-dataset)
-- [Mouse Metagenomic Dataset](#mouse-metagenomic-dataset)
-- [Chicken Metagenomic Dataset](#chicken-metagenomic-dataset)
+- [Part 1: Simulation](#part-1-simulation)
+- [Part 2: Human Microbiome Project (HMP) dataset](#part-2-human-microbiome-project-hmp-dataset)
+- [Part 3: Mouse Metagenomic Dataset](#part-3-mouse-metagenomic-dataset)
+- [Part 4: Chicken Metagenomic Dataset](#part-4-chicken-metagenomic-dataset)
 - [References](#references)
 
 <!-- TOC end -->
@@ -67,7 +67,19 @@ bash 04_simulation_scims.sh
 Expected outputs:
 - SCiMS results in `./results/scims`
 
+5. Run Rx, Ry, and BeXY on downsampled simulated data:
+```bash
+bash 05_simulation_rxry.sh
+bash 06_simulation_bexy.sh
+```
 
+7. Generate the Figure 2:
+```bash
+python3 ./scripts/figure2.py
+```
+
+Expected outputs:
+- Figures in `./figures`
 
 
 
