@@ -4,6 +4,6 @@ channels:
   - conda-forge
   - defaults
 dependencies:
-  - snakemake>=8.11.3
-  - python=3.9
+  - snakemake=8.11.3
+  - python=3.11
   - wget
