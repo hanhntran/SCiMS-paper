@@ -5,14 +5,10 @@ IDXSTATS_DIR="./01_simulation/mapped_reads"
 OUTPUT_DIR="./01_simulation/results"
 SCAFFOLDS_FILE="./01_simulation/simulated_ref/GRCh38_scaffolds.txt"
 METADATA_FILE="./01_simulation/simulation_metadata.tsv"
-THRESHOLD="0.5"
 X_scaffold="NC_000023.11"
 Y_scaffold="NC_000024.10"
 id_colummn="Run"
 
-
-# Create results directory
-mkdir -p ${OUTPUT_DIR}
 
 # Run SCiMS with simulated idxstats files
 scims \
