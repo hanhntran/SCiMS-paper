@@ -1,13 +1,13 @@
 import os
 
-main_dir = os.path.abspath(".")
+main_dir = os.getcwd()
 
 genome_url = "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/027/557/775/GCA_027557775.1_bGalGal4.pri"
 genome_file = "GCA_027557775.1_bGalGal4.pri_genomic.fna.gz"
 
 # Paths and files
 REF_GENOME = os.path.join(main_dir, "data/ref_genome", "GCA_027557775.1_bGalGal4.pri_genomic.fna.gz")
-BOWTIE2_INDEX_PREFIX = os.path.join(main_dir, "data/ref_genome", "bGalGal4.pri")
+BOWTIE2_INDEX_PREFIX = os.path.join(main_dir, "data/ref_genome", "GCA_027557775.1_bGalGal4.pri_genomic.fna.gz")
 SCAFFOLD_FILE = os.path.join(main_dir, "data/ref_genome", "chicken_scaffold.txt")
 SRA_FILE = os.path.join(main_dir, "data", "chicken_sra.txt")
 
@@ -35,7 +35,7 @@ rule download_ref_genome:
     output:
         REF_GENOME
     conda:
-        "../envs/python3.9.yaml"
+        f"{main_dir}/envs/python3.9.yaml"
     shell:
         "wget {genome_url}/{genome_file} -O {output}"
 
@@ -45,7 +45,7 @@ rule index_ref_genome:
     output:
         BOWTIE2_INDEX_PREFIX + ".1.bt2"
     conda:
-        "../envs/bowtie2_samtools.yaml"
+        f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell:
         "bowtie2-build {input} {BOWTIE2_INDEX_PREFIX}"
 
@@ -56,7 +56,7 @@ rule download_sra_reads:
     params:
         sra_id = "{sra}"
     conda:
-        "../envs/sra-tools.yaml"
+        f"{main_dir}/envs/sra-tools.yaml"
     shell:
         "fastq-dump --split-files --gzip --outdir {raw_reads_dir} {params.sra_id}"
 
@@ -68,7 +68,7 @@ rule trim_reads:
         forward = f"{trimmed_reads_dir}/{{sra}}_1.trimmed.fastq.gz",
         reverse = f"{trimmed_reads_dir}/{{sra}}_2.trimmed.fastq.gz"
     conda:
-        "../envs/fastp.yaml"
+        f"{main_dir}/envs/fastp.yaml"
     shell:
         """
         fastp -i {input.forward} -I {input.reverse} \
@@ -85,7 +85,7 @@ rule map_reads:
     output:
         bam = f"{mapped_reads_dir}/{{sra}}.sorted.bam"
     conda:
-        "../envs/bowtie2_samtools.yaml"
+        f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell:
         """
         bowtie2 -x {BOWTIE2_INDEX_PREFIX} \
@@ -101,7 +101,7 @@ rule remove_duplicates:
         bam = f"{mapped_reads_dir}/{{sra}}.rmdup.bam",
         metrics = f"{mapped_reads_dir}/{{sra}}.metrics.txt"
     conda:
-        "../envs/picard.yaml"
+        f"{main_dir}/envs/picard.yaml"
     shell:
         """
         picard MarkDuplicates \
@@ -118,7 +118,7 @@ rule idxstats:
     output:
         idxstats = f"{mapped_reads_dir}/{{sra}}.idxstats"
     conda:
-        "../envs/bowtie2_samtools.yaml"
+        f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell:
         """
         samtools idxstats {input.bam} > {output.idxstats}
