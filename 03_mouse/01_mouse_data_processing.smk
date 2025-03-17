@@ -1,13 +1,13 @@
 import os
 
-main_dir = os.path.abspath(".")
+main_dir = os.getcwd()
 
 genome_url = "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/635/GCF_000001635.27_GRCm39"
 genome_file = "GCA_000001635.27_GRCm39_genomic.fna.gz"
 
 # Paths and files
 REF_GENOME = os.path.join(main_dir, "data/ref_genome", "GCF_000001635.27_GRCm39_genomic.fna.gz")
-BOWTIE2_INDEX_PREFIX = os.path.join(main_dir, "data/ref_genome", "GRCm39")
+BOWTIE2_INDEX_PREFIX = os.path.join(main_dir, "data/ref_genome", "GCF_000001635.27_GRCm39_genomic.fna.gz")
 SCAFFOLD_FILE = os.path.join(main_dir, "data/ref_genome", "mouse_scaffold.txt")
 SRA_FILE = os.path.join(main_dir, "data", "mouse_sra.txt")
 
@@ -43,7 +43,7 @@ rule index_ref_genome:
     output:
         BOWTIE2_INDEX_PREFIX + ".1.bt2"
     conda:
-        "../envs/bowtie2_samtools.yaml"
+        f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell:
         "bowtie2-build {input} {BOWTIE2_INDEX_PREFIX}"
 
@@ -54,7 +54,7 @@ rule download_sra_reads:
     params:
         sra_id = "{sra}"
     conda:
-        "../envs/sra-tools.yaml"
+        f"{main_dir}/envs/sra-tools.yaml"
     shell:
         "fastq-dump --split-files --gzip --outdir {raw_reads_dir} {params.sra_id}"
 
@@ -66,7 +66,7 @@ rule trim_reads:
         forward = f"{trimmed_reads_dir}/{{sra}}_1.trimmed.fastq.gz",
         reverse = f"{trimmed_reads_dir}/{{sra}}_2.trimmed.fastq.gz"
     conda:
-        "../envs/fastp.yaml"
+        f"{main_dir}/envs/fastp.yaml"
     shell:
         """
         fastp -i {input.forward} -I {input.reverse} \
@@ -83,7 +83,7 @@ rule map_reads:
     output:
         bam = f"{mapped_reads_dir}/{{sra}}.sorted.bam"
     conda:
-        "../envs/bowtie2_samtools.yaml"
+        f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell:
         """
         bowtie2 -x {BOWTIE2_INDEX_PREFIX} \
@@ -99,7 +99,7 @@ rule remove_duplicates:
         bam = f"{mapped_reads_dir}/{{sra}}.rmdup.bam",
         metrics = f"{mapped_reads_dir}/{{sra}}.metrics.txt"
     conda:
-        "../envs/picard.yaml"
+        f"{main_dir}/envs/picard.yaml"
     shell:
         """
         picard MarkDuplicates \
@@ -116,7 +116,7 @@ rule idxstats:
     output:
         idxstats = f"{mapped_reads_dir}/{{sra}}.idxstats"
     conda:
-        "../envs/bowtie2_samtools.yaml"
+        f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell:
         """
         samtools idxstats {input.bam} > {output.idxstats}
