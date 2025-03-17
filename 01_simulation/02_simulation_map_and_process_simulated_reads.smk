@@ -1,9 +1,12 @@
 import os
 
 # Directories and paths
+main_dir = os.getcwd()
 
-main_dir = os.path.abspath(".")
-ref_genome_index = os.path.join(main_dir, "data/ref_genome/GRCh38_latest_genomic.fna")
+genome_file = "GCF_000001405.40_GRCh38.p14_genomic.fna.gz"
+
+ref_dir = os.path.join(main_dir, "data/ref_genome")
+ref_genome_index = os.path.join(ref_dir, genome_file)
 simulated_reads_dir = os.path.join(main_dir, "01_simulation/simulated_reads")
 map_dir = os.path.join(main_dir, "01_simulation/mapped_reads")
 
@@ -24,7 +27,7 @@ rule map_simulated_reads:
     params:
         index=ref_genome_index
     conda:
-        "./envs/bowtie2_samtools.yaml"
+        f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell:
         """
         bowtie2 -x {params.index} -1 {input.forward_reads} -2 {input.reverse_reads} | \
@@ -44,7 +47,7 @@ rule add_read_groups:
         RGPU="unit1",
         RGSM="S{sex}100000000"
     conda:
-        "./envs/picard.yaml"
+        f"{main_dir}/envs/picard.yaml"
     shell:
         """
         picard AddOrReplaceReadGroups \
@@ -65,7 +68,7 @@ rule mark_duplicates:
         rmdup_bam=f"{map_dir}/S{{sex}}100000000.sorted.rmdup.bam",
         metrics=f"{map_dir}/S{{sex}}100000000.duplication_metrics.txt"
     conda:
-        "./envs/picard.yaml"
+        f"{main_dir}/envs/picard.yaml"
     shell:
         """
         picard MarkDuplicates \
