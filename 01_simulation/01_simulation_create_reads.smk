@@ -1,6 +1,6 @@
 import os
 
-main_dir = os.path.abspath(".")
+main_dir = os.getcwd()
 
 # Define paths and files
 genome_url = "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/405/GCF_000001405.40_GRCh38.p14"
@@ -22,7 +22,8 @@ rule all:
 rule download_ref_genomes:
     output:
         f"{ref_dir}/{genome_file}"
-    conda: "./envs/python3.9.yaml"
+    conda: 
+        f"{main_dir}/envs/python3.9.yaml"
     params:
         genome_url=genome_url,
         genome_file=genome_file
@@ -34,7 +35,8 @@ rule index_ref_genomes:
         ref=f"{ref_dir}/{genome_file}"
     output:
         f"{ref_dir}/{genome_file}"
-    conda: "./envs/bowtie2_samtools.yaml"
+    conda: 
+        f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell: "bowtie2-build {input} {output}"
 
 rule create_ref_genomes_for_male_and_female:
@@ -43,7 +45,8 @@ rule create_ref_genomes_for_male_and_female:
     output:
         male=f"{simulated_ref_dir}/simulated_ref_male.fasta",
         female=f"{simulated_ref_dir}/simulated_ref_female.fasta"
-    conda: "./envs/python3.9.yaml"
+    conda: 
+        f"{main_dir}/envs/python3.9.yaml"
     shell:
         "python ./scripts/create_ref.py -r {input.ref} -o {simulated_ref_dir}/simulated_ref"
 
@@ -52,7 +55,8 @@ rule simulate_reads_male:
     output:
         fastq1=f"{simulated_reads_dir}/SM100000000_1.fastq.gz",
         fastq2=f"{simulated_reads_dir}/SM100000000_2.fastq.gz"
-    conda: "./envs/wgsim-1.0.yaml"
+    conda: 
+        f"{main_dir}/envs/wgsim-1.0.yaml"
     shell: 
         """
         wgsim -N 100000000 -1 150 -2 150 {input} male_1.fastq male_2.fastq
@@ -66,7 +70,8 @@ rule simulate_reads_female:
     output:
         fastq1=f"{simulated_reads_dir}/SF100000000_1.fastq.gz",
         fastq2=f"{simulated_reads_dir}/SF100000000_2.fastq.gz"
-    conda: "./envs/wgsim-1.0.yaml"
+    conda: 
+        f"{main_dir}/envs/wgsim-1.0.yaml"
     shell:  
         """
         wgsim -N 100000000 -1 150 -2 150 {input} female_1.fastq female_2.fastq
