@@ -37,8 +37,7 @@ mamba activate scims-env
 ### Part 1: Simulation
 1. Generate the simulation data:
 ```bash
-cd 01_simulation
-snakemake -s 01_simulation_create_reads.smk --cores 4 --use-conda
+snakemake -s 01_simulation/01_simulation_create_reads.smk --cores 4 --use-conda
 ```
 Expected outputs:
 - Simulated reference genomes (male and female) in `./data/simulated_ref`
@@ -47,14 +46,14 @@ Expected outputs:
 2. Map simulated reads and process BAM files:
 
 ```bash
-snakemake -s 02_simulation_map_and_process_simulated_reads.smk --cores 4 --use-conda
+snakemake -s 01_simulation/02_simulation_map_and_process_simulated_reads.smk --cores 4 --use-conda
 ```
 Expected outputs:
 - Sorted, indexed, and duplicate-removed BAM files (sorted.rmdup.bam) in `./data/mapped_reads`
 
 3. Downsample the BAM files:
 ```bash
-snakemake -s 03_simulation_downsample_reads.smk --cores 4 --use-conda
+snakemake -s 01_simulation/03_simulation_downsample_reads.smk --cores 4 --use-conda
 ```
 Expected outputs:
 - Downsampled BAM files (*.1000x.bam) in `./data/mapped_reads`
@@ -62,15 +61,15 @@ Expected outputs:
 
 4. Run SCiMS on downsampled simulated data:
 ```bash
-bash 04_simulation_scims.sh
+bash 01_simulation/04_simulation_scims.sh
 ```
 Expected outputs:
 - SCiMS results in `./results/scims`
 
 5. Run Rx, Ry, and BeXY on downsampled simulated data:
 ```bash
-bash 05_simulation_rxry.sh
-bash 06_simulation_bexy.sh
+bash 01_simulation/05_simulation_rxry.sh
+bash 01_simulation/06_simulation_bexy.sh
 ```
 
 7. Generate the Figure 2:
