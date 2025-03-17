@@ -2,11 +2,11 @@
 
 # Variables
 THRESHOLD="0.95"
-RXRY_SCRIPT="../scripts/rxry_script.py"
-METADATA="../01_simulation/simulation_metadata.tsv"
-SCAFFOLDS="../data/ref_genome/GRCh38_scaffolds.txt"
-OUTPUT_DIR="../01_simulation/results"
-IDXSTATS_DIR="../01_simulation/mapped_reads"
+RXRY_SCRIPT="./scripts/rxry_script.py"
+METADATA="./01_simulation/simulation_metadata.tsv"
+SCAFFOLDS="./01_simulation/simulated_ref/GRCh38_scaffolds.txt"
+OUTPUT_DIR="./01_simulation/results"
+IDXSTATS_DIR="./01_simulation/mapped_reads"
 MASTER_RXRY_OUTPUT="${OUTPUT_DIR}/simulation_rxry_output.txt"
 SYSTEM="XY"
 
