@@ -63,8 +63,6 @@ Expected outputs:
 ```bash
 bash 01_simulation/04_simulation_scims.sh
 ```
-Expected outputs:
-- SCiMS results in `./results/scims`
 
 5. Run Rx, Ry, and BeXY on downsampled simulated data:
 ```bash
@@ -77,9 +75,73 @@ bash 01_simulation/06_simulation_bexy.sh
 python3 ./scripts/figure2.py
 ```
 
-Expected outputs:
-- Figures in `./figures`
+### Part 2: Human Microbiome Project (HMP) dataset
 
+1. Download the HMP dataset and map reads to the reference genomes:
+```bash
+snakemake -s 02_hmp/01_hmp_data_processing.smk --cores 4 --use-conda
+```
 
+2. Run SCiMS on HMP dataset:
+```bash
+snakemake -s 02_hmp/02_hmp_scims.smk --cores 4 --use-conda
+```
+
+3. Run Rx, Ry, and BeXY on HMP dataset:
+```bash
+bash 02_hmp/03_hmp_rxry.sh
+bash 02_hmp/04_hmp_bexy.sh
+```
+
+4. Generate the Figure 3:
+```bash
+python3 ./scripts/figure3_A.py
+```
+
+### Part 3: Mouse Metagenomic Dataset
+
+1. Download the mouse metagenomic dataset and map reads to the reference genomes:
+```bash
+snakemake -s 03_mouse/01_mouse_data_processing.smk --cores 4 --use-conda
+```
+
+2. Run SCiMS on mouse metagenomic dataset:
+```bash
+snakemake -s 03_mouse/02_mouse_scims.smk --cores 4 --use-conda
+```
+
+3. Run Rx, Ry, and BeXY on mouse metagenomic dataset:
+```bash
+bash 03_mouse/03_mouse_rxry.sh
+bash 03_mouse/04_mouse_bexy.sh
+``` 
+
+4. Generate the Figure 4:
+```bash
+python3 ./scripts/figure3_B.py
+```
+
+### Part 4: Chicken Metagenomic Dataset
+
+1. Download the chicken metagenomic dataset and map reads to the reference genomes:
+```bash
+snakemake -s 04_chicken/01_chicken_data_processing.smk --cores 4 --use-conda
+```
+
+2. Run SCiMS on chicken metagenomic dataset:
+```bash
+snakemake -s 04_chicken/02_chicken_scims.smk --cores 4 --use-conda
+```
+
+3. Run Rx, Ry, and BeXY on chicken metagenomic dataset:
+```bash
+bash 04_chicken/03_chicken_rxry.sh
+bash 04_chicken/04_chicken_bexy.sh
+```
+
+4. Generate the Figure 5:
+```bash
+python3 ./scripts/figure3_C.py  
+```
 
 
