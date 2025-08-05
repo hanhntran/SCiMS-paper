@@ -17,11 +17,21 @@ rule all:
     input:
         expand(f"{map_dir}/S{{sex}}100000000.sorted.rmdup.bam", sex=["M", "F"])
 
+rule index_ref_genomes:
+    input:
+        ref=ref_genome_index
+    output:
+        index=ref_genome_index + ".1.bt2"
+    params: ref_genome_index
+    conda: 
+        f"{main_dir}/envs/bowtie2_samtools.yaml"
+    shell: "bowtie2-build {input} {params}"
+
 rule map_simulated_reads:
     input:
         forward_reads=f"{simulated_reads_dir}/S{{sex}}100000000_1.fastq.gz",
         reverse_reads=f"{simulated_reads_dir}/S{{sex}}100000000_2.fastq.gz",
-        index=ref_genome_index + ".bwt"
+        index=ref_genome_index + ".1.bt2"
     output:
         sorted_bam=f"{map_dir}/S{{sex}}100000000.sorted.bam"
     params:
@@ -30,9 +40,9 @@ rule map_simulated_reads:
         f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell:
         """
-        bowtie2 -x {params.index} -1 {input.forward_reads} -2 {input.reverse_reads} | \
+        bowtie2 -p 5 -x {params.index} -1 {input.forward_reads} -2 {input.reverse_reads} | \
         samtools view -b -q 30 | \
-        samtools sort -o {output}
+        samtools sort  -@ 5 -m 1G -o {output}
         """
 
 rule add_read_groups:
