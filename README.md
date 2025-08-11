@@ -55,6 +55,23 @@ Expected outputs:
 ```bash
 snakemake -s 01_simulation/03_simulation_downsample_reads.smk --cores 4 --use-conda
 ```
+> [!WARNING] \
+> The downsampling step will generate ~72,000 files and will take several days to complete and memory-intensive (~300GB). \
+> Alternatively, you can run this pipeline in parallel using a Snakemake plugin 'snakemake-executor-plugin-slurm` \
+> For example, to run the pipeline in parallel, you can use the following commands. With these settings, the pipeline will run in parallel on ~25 jobs, and each job will take 3-4 hours to complete.
+```bash
+pip install snakemake-executor-plugin-slurm
+
+snakemake -s 01_simulation/03_simulation_downsample_reads.smk \
+          --executor cluster-generic \
+          --cluster-generic-submit-cmd "sbatch --partition=open --account=open --time=12:00:00 --nodes=1 --ntasks=1 --mem=20GB" \
+          --jobs 60 \
+          --groups downsample_bam=group_03 index_downsampled_bam=group_03 generate_idxstats=group_03 \
+          --group-components group_03=60 \
+          --rerun-incomplete \
+          --latency-wait 60 
+```
+
 Expected outputs:
 - Downsampled BAM files (*.1000x.bam) in `./data/mapped_reads`
 - Index stats files (*.1000x.idxstats) in `./data/mapped_reads`
