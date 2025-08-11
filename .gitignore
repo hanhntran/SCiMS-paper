@@ -5,7 +5,7 @@
 *.bt2
 01_simulation/mapped_reads/
 .snakemake/
-
+*.out
 
 ### Base Python .gitignore
 # Byte-compiled / optimized / DLL files
