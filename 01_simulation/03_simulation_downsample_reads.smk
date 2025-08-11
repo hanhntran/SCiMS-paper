@@ -8,7 +8,6 @@ map_dir = os.path.join(main_dir, "01_simulation/mapped_reads")
 depth = ["150", "200", "250", "300", "350", "400", "450", "1000", "5000", "10000", "100000", "1000000"]
 sex = ["F", "M"]
 iteration = list(range(1, 1001))
-# iteration = list(range(1, 11))
 
 rule all:
     input:
