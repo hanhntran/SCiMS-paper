@@ -55,7 +55,7 @@ Expected outputs:
 ```bash
 snakemake -s 01_simulation/03_simulation_downsample_reads.smk --cores 4 --use-conda
 ```
-> [!WARNING] \
+> [!WARNING] 
 > The downsampling step will generate ~72,000 files and will take several days to complete and memory-intensive (~300GB). \
 > Alternatively, you can run this pipeline in parallel using a Snakemake plugin 'snakemake-executor-plugin-slurm`. \
 > For example, to run the pipeline in parallel, you can use the following commands. With these settings, the pipeline will run in parallel on ~25 jobs, and each job will take 3-4 hours to complete.
