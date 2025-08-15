@@ -17,13 +17,14 @@ def read_master_file(master_file):
         idxstats_files = file.readlines()
     return [line.strip() for line in idxstats_files if line.strip()]
 
-# extrract id from idxstats file
-def extract_sample_id(filename):
-    match = re.search(r'([A-Za-z0-9\-\_]+)', filename)
-    if match:
-        return match.group(1)
-    else:
-        raise ValueError(f"Sample ID not found in filename: {filename}")
+def extract_sample_id(file_path: str) -> str:
+    """
+    Returns the base filename (minus extension) as the sample ID.
+    Example: 'my_sample_001.idxstats' -> 'my_sample_001'
+    """
+    base_name = os.path.basename(file_path)      # e.g. 'my_sample_001.idxstats'
+    root, ext = os.path.splitext(base_name)      # ('my_sample_001', '.idxstats')
+    return root
 
 # Read in metadata file
 def read_metadata(metadata_path):
