@@ -83,8 +83,30 @@ bash 01_simulation/04_simulation_scims.sh
 ```
 
 5. Run Rx, Ry, and BeXY on downsampled simulated data:
+Execute the following commands to run Rx, Ry:
 ```bash
 bash 01_simulation/05_simulation_rxry.sh
+```
+
+Execute the following commands to run BeXY:
+
+BeXY installation guide for Linux: (original intructions can be found [Bexy](https://bitbucket.org/wegmannlab/bexy/wiki/Installation))
+```bash
+conda create -n bexy
+conda activate bexy
+conda install -c conda-forge gxx=13.2.0 cmake=3.26.3 libblas liblapack
+
+git clone https://bitbucket.org/WegmannLab/bexy.git
+cd bexy
+bash compile_bexy.sh
+
+cp ./build/bexy "$CONDA_PREFIX/bin"
+chmod +x "$CONDA_PREFIX/bin/bexy"
+```
+
+```bash
+conda activate bexy
+
 bash 01_simulation/06_simulation_bexy.sh
 ```
 
@@ -106,8 +128,13 @@ snakemake -s 02_hmp/02_hmp_scims.smk --cores 4 --use-conda
 ```
 
 3. Run Rx, Ry, and BeXY on HMP dataset:
+Execute the following commands to run Rx, Ry:
 ```bash
 bash 02_hmp/03_hmp_rxry.sh
+``` 
+
+Execute the following commands to run BeXY:
+```bash
 bash 02_hmp/04_hmp_bexy.sh
 ```
 
@@ -129,8 +156,13 @@ snakemake -s 03_mouse/02_mouse_scims.smk --cores 4 --use-conda
 ```
 
 3. Run Rx, Ry, and BeXY on mouse metagenomic dataset:
+Execute the following commands to run Rx, Ry:
 ```bash
 bash 03_mouse/03_mouse_rxry.sh
+``` 
+
+Execute the following commands to run BeXY:
+```bash
 bash 03_mouse/04_mouse_bexy.sh
 ``` 
 
