@@ -106,8 +106,13 @@ chmod +x "$CONDA_PREFIX/bin/bexy"
 
 ```bash
 conda activate bexy
-
 bash 01_simulation/06_simulation_bexy.sh
+```
+
+```bash
+conda activate scims-env
+# generate bexy output in R
+Rscript ./scripts/bexy.R
 ```
 
 7. Generate the Figure 2:
@@ -135,7 +140,14 @@ bash 02_hmp/03_hmp_rxry.sh
 
 Execute the following commands to run BeXY:
 ```bash
+conda activate bexy
 bash 02_hmp/04_hmp_bexy.sh
+```
+
+```bash
+conda activate scims-env
+# generate bexy output in R
+Rscript ./scripts/bexy.R
 ```
 
 4. Generate the Figure 3:
@@ -163,8 +175,15 @@ bash 03_mouse/03_mouse_rxry.sh
 
 Execute the following commands to run BeXY:
 ```bash
+conda activate bexy
 bash 03_mouse/04_mouse_bexy.sh
 ``` 
+
+```bash
+conda activate scims-env
+# generate bexy output in R
+Rscript ./scripts/bexy.R
+```
 
 4. Generate the Figure 4:
 ```bash
@@ -184,14 +203,24 @@ snakemake -s 04_chicken/02_chicken_scims.smk --cores 4 --use-conda
 ```
 
 3. Run Rx, Ry, and BeXY on chicken metagenomic dataset:
+Execute the following commands to run Rx, Ry:
 ```bash
 bash 04_chicken/03_chicken_rxry.sh
+```
+
+Execute the following commands to run BeXY:
+```bash
+conda activate bexy
 bash 04_chicken/04_chicken_bexy.sh
+```
+
+```bash
+conda activate scims-env
+# generate bexy output in R
+Rscript ./scripts/bexy.R
 ```
 
 4. Generate the Figure 5:
 ```bash
 python3 ./scripts/figure3_C.py  
 ```
-
-
