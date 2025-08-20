@@ -1,5 +1,3 @@
-#!/storage/group/exd44/default/hxt5213/conda/envs/simulation_conda_env/bin/python
-
 import pysam
 import numpy
 from numpy.random import default_rng
@@ -30,6 +28,7 @@ outbam=pysam.AlignmentFile(output_file, "wb",template=inbam)
 i=0
 print("Number of reads that will be in output BAM:"+str(read_count))
 print("Downsample Proportion:"+str(float(read_count)/float(total_reads)))
+
 for read in inbam:
     if((counter > max_line) or i == len(lines_to_pull)):
         break
