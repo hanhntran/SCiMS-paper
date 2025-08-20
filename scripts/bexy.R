@@ -1,15 +1,11 @@
 if (!requireNamespace("bexy", quietly = TRUE)) {
-    install.packages("bexy")
+    install.packages("bexy", repos = "http://cran.us.r-project.org")
 }
 library(bexy)
+args <- commandArgs(TRUE) 
+files_dir <- args[[1]]
 
-bex <- bexy("./bexy/")
-
+bex <- bexy(files_dir)
 getPosteriorModeSexKaryotypes(bex)
 
-result_dir <- "bexy_out"
-
-dir.create(result_dir), showWarnings = FALSE)
-
-writePosteriorModeSexKaryotypes(bex, './bexy_output', threshold_certainty = 0.95)
-
+writePosteriorModeSexKaryotypes(bex, file.path(files_dir, 'simulation_bexy_output_0.95.txt'), threshold_certainty = 0.95)
