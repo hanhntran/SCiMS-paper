@@ -59,7 +59,7 @@ rule simulate_reads_male:
         f"{main_dir}/envs/wgsim-1.0.yaml"
     shell: 
         """
-        wgsim -N 100000000 -1 150 -2 150 {input} male_1.fastq male_2.fastq
+        wgsim -N 100000000 -1 150 -2 150 {input} male_1.fastq male_2.fastq > /dev/null
         gzip male_1.fastq male_2.fastq
         mv male_1.fastq.gz {output.fastq1}
         mv male_2.fastq.gz {output.fastq2}
@@ -74,7 +74,7 @@ rule simulate_reads_female:
         f"{main_dir}/envs/wgsim-1.0.yaml"
     shell:  
         """
-        wgsim -N 100000000 -1 150 -2 150 {input} female_1.fastq female_2.fastq
+        wgsim -N 100000000 -1 150 -2 150 {input} female_1.fastq female_2.fastq > /dev/null
         gzip female_1.fastq female_2.fastq
         mv female_1.fastq.gz {output.fastq1}
         mv female_2.fastq.gz {output.fastq2}
