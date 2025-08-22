@@ -30,15 +30,6 @@ rule download_ref_genomes:
     shell:
         "wget {params.genome_url}/{params.genome_file} -O {output}"
 
-rule index_ref_genomes:
-    input:
-        ref=f"{ref_dir}/{genome_file}"
-    output:
-        f"{ref_dir}/{genome_file}"
-    conda: 
-        f"{main_dir}/envs/bowtie2_samtools.yaml"
-    shell: "bowtie2-build {input} {output}"
-
 rule create_ref_genomes_for_male_and_female:
     input:
         ref=f"{ref_dir}/{genome_file}"
