@@ -3,16 +3,22 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 from sklearn.metrics import classification_report
+import os
+from numpy import nan
 
-scims_file = "./results/scims/simulation_metadata_scims_updated.txt"
-rxry_file = "./results/simulation_rxry_output.txt"
-bexy_file = "./bexy_output/simulation_bexy_output_0.95.txt"
+scims_file = "01_simulation/results/simulation_metadata_scims_updated.txt"
+rxry_file = "01_simulation/results/simulation_rxry_output.txt"
+bexy_file = "01_simulation/bexy_output/simulation_bexy_output_0.95.txt"
+
+if not os.path.isdir('./figures'):
+    os.mkdir('./figures')
 
 scims = pd.read_csv(scims_file, sep="\t")
 scims.rename(columns={'Run': 'Sample'}, inplace=True)
+scims['SCiMS_sex'] = scims['SCiMS_sex'].str.strip().str.capitalize()
 #scims = scims[scims['Status'] == 'Success']
 
-sub_cols = scims[['Sample', 'SCiMS_reads_mapped', 'actual_sex']]
+sub_cols = scims[['Sample']]
 
 rxry = pd.read_csv(rxry_file, sep="\t")
 rxry.rename(columns={'Run': 'Sample'}, inplace=True)
@@ -24,17 +30,6 @@ bexy.rename(columns={'sample': 'Sample'}, inplace=True)
 bexy['Sample'] = bexy['Sample'].str.replace('.sorted', '')
 bexy_merged = pd.merge(sub_cols, bexy, on="Sample")
 
-# Define the categories
-categories = [150, 250, 350, 450, 1000, 5000, 10000, 100000, 1000000]
-# Function to categorize based on `SCiMS_reads_mapped_y`
-def categorize_reads(mapped_y):
-    return min(categories, key=lambda x: abs(x - mapped_y))
-
-# Apply the function to create a new `read_bin_category` column
-scims['read_bin_category'] = scims['SCiMS_reads_mapped'].apply(categorize_reads)
-rxry_merged['read_bin_category'] = rxry_merged['SCiMS_reads_mapped'].apply(categorize_reads)
-bexy_merged['read_bin_category'] = bexy_merged['SCiMS_reads_mapped'].apply(categorize_reads)
-
 # Infer sex based on Rx
 inferred_sex_Rx = []
 for index, row in rxry_merged.iterrows():
@@ -43,9 +38,9 @@ for index, row in rxry_merged.iterrows():
         if isinstance(row['Rx 95% CI'], str):
             ci_low_rx, ci_high_rx = map(float, row['Rx 95% CI'].strip('()').split(', '))
             if ci_low_rx > 0.8:
-                inferred_sex_Rx.append('female')
+                inferred_sex_Rx.append('Female')
             elif ci_high_rx < 0.6:
-                inferred_sex_Rx.append('male')
+                inferred_sex_Rx.append('Male')
             else:
                 inferred_sex_Rx.append('uncertain')
         else:
@@ -62,9 +57,9 @@ for index, row in rxry_merged.iterrows():
         if isinstance(row['Ry 95% CI'], str):
             ci_low_ry, ci_high_ry = map(float, row['Ry 95% CI'].strip('()').split(', '))
             if ci_low_ry > 0.077:
-                inferred_sex_Ry.append('male')
+                inferred_sex_Ry.append('Male')
             elif ci_high_ry < 0.016:
-                inferred_sex_Ry.append('female')
+                inferred_sex_Ry.append('Female')
             else:
                 inferred_sex_Ry.append('uncertain')
         else:
@@ -72,82 +67,40 @@ for index, row in rxry_merged.iterrows():
     except ValueError:
         inferred_sex_Ry.append('uncertain')  # Handle missing or malformed CI values
 rxry_merged['inferred_sex_Ry'] = inferred_sex_Ry
+rxry_merged_filtered = rxry_merged.filter(['Sample','Rx', 'Rx 95% CI', 'Ry','Ry 95% CI','inferred_sex_Rx', 'inferred_sex_Ry'])
 
 # Infer sex based on bexy
 inferred_sex_bexy = []
 for index, row in bexy_merged.iterrows():
     if row['sex_karyotype'] == 'XX':
-        inferred_sex_bexy.append('female')
+        inferred_sex_bexy.append('Female')
     elif row['sex_karyotype'] == 'XY':
-        inferred_sex_bexy.append('male')
+        inferred_sex_bexy.append('Male')
     else:
         inferred_sex_bexy.append('uncertain')
 bexy_merged['inferred_sex_bexy'] = inferred_sex_bexy
 
 ##########################################################################################################
 # Figure 2A: Barchart
-# To handle uncertain cases, we'll identify cases where predictions are marked as "uncertain".
 # We'll then categorize the predictions into "correct", "incorrect", and "uncertain" for each method.
+merged_1 = pd.merge(scims, rxry_merged_filtered, on="Sample")
+merged_df = pd.merge(merged_1, bexy_merged, on="Sample")
 
-merged_1 = pd.merge(scims, rxry, on="Sample")
-merged_df = pd.merge(merged_1, bexy, on="Sample")
+# Define the categories
+categories = [150, 250, 350, 450, 1000, 5000, 10000, 100000, 1000000]
+# Function to categorize based on `SCiMS_reads_mapped_y`
+def categorize_reads(mapped_y):
+    return min(categories, key=lambda x: abs(x - mapped_y))
 
 merged_df['read_bin_category'] = merged_df['SCiMS_reads_mapped'].apply(categorize_reads)
 
 def categorize_predictions(row, method_column):
     if row[method_column] == 'uncertain':
         return 'uncertain'
-    elif (row['actual_sex_x'] == 'female' and row[method_column] == 'female') or (row['actual_sex_x'] == 'male' and row[method_column] == 'male'):
+    elif (row['actual_sex'] == 'Female' and row[method_column] == 'Female') or (row['actual_sex'] == 'Male' and row[method_column] == 'Male'):
         return 'correct'
     else:
         return 'incorrect'
-
-inferred_sex_Rx = []
-for index, row in merged_df.iterrows():
-    try:
-        # Check if the value is a string before applying strip
-        if isinstance(row['Rx 95% CI'], str):
-            ci_low_rx, ci_high_rx = map(float, row['Rx 95% CI'].strip('()').split(', '))
-            if ci_low_rx > 0.8:
-                inferred_sex_Rx.append('female')
-            elif ci_high_rx < 0.6:
-                inferred_sex_Rx.append('male')
-            else:
-                inferred_sex_Rx.append('uncertain')
-        else:
-            inferred_sex_Rx.append('uncertain')  # Handle non-string values
-    except ValueError:
-        inferred_sex_Rx.append('uncertain')  # Handle missing or malformed CI values
-merged_df['inferred_sex_Rx'] = inferred_sex_Rx
-
-inferred_sex_Ry = []
-for index, row in merged_df.iterrows():
-    try:
-        # Check if the value is a string before applying strip
-        if isinstance(row['Ry 95% CI'], str):
-            ci_low_ry, ci_high_ry = map(float, row['Ry 95% CI'].strip('()').split(', '))
-            if ci_low_ry > 0.077:
-                inferred_sex_Ry.append('male')
-            elif ci_high_ry < 0.016:
-                inferred_sex_Ry.append('female')
-            else:
-                inferred_sex_Ry.append('uncertain')
-        else:
-            inferred_sex_Ry.append('uncertain')  # Handle non-string values
-    except ValueError:
-        inferred_sex_Ry.append('uncertain')  # Handle missing or malformed CI values
-merged_df['inferred_sex_Ry'] = inferred_sex_Ry
-
-# Infer sex based on bexy
-inferred_sex_bexy = []
-for index, row in merged_df.iterrows():
-    if row['sex_karyotype'] == 'XX':
-        inferred_sex_bexy.append('female')
-    elif row['sex_karyotype'] == 'XY':
-        inferred_sex_bexy.append('male')
-    else:
-        inferred_sex_bexy.append('uncertain')
-merged_df['inferred_sex_bexy'] = inferred_sex_bexy
 
 # Apply this function for each method and each read depth bin
 categorization_by_depth = merged_df.groupby('read_bin_category').apply(lambda x: pd.DataFrame({
@@ -205,7 +158,7 @@ plt.gca().spines["right"].set_linewidth(1)
 plt.tight_layout()
 
 # Save with high DPI and heavier outline
-plt.savefig('./figures/fig2A_barchart.eps', dpi=300, bbox_inches='tight', transparent=True, format='eps')
+plt.savefig('./figures/fig2A_barchart.pdf', dpi=300, bbox_inches='tight', transparent=True, format='pdf')
 
 plt.show()
 
@@ -214,123 +167,25 @@ plt.show()
 methods = ['SCiMS', 'BeXY', 'Rx', 'Ry']
 markers = ['D', 'h', 'o', 's']
 
-
-# Initialize lists to store accuracies and SEMs for read bins
-read_bins = []
-accuracies = {method: [] for method in methods}
-sem_accuracies = {method: [] for method in methods}
-
-# Group the data by read bins
-read_bin_all = sorted(list(set(scims['read_bin_category'].unique()) | 
-                            set(rxry_merged['read_bin_category'].unique()) | 
-                            set(bexy_merged['read_bin_category'].unique())))
-
-
-# Calculate accuracies for each group
-## SCiMS
-for read_bin in read_bin_all:
-    group = scims[scims['read_bin_category'] == read_bin]
-    if len(group) == 0:
-        accuracies['SCiMS'].append(np.nan)
-        sem_accuracies['SCiMS'].append(np.nan)
-    else:
-        correct_predictions = group[group['SCiMS_sex'] == group['actual_sex']]
-        accuracy = len(correct_predictions) / len(group) if len(group) > 0 else 0
-        accuracies['SCiMS'].append(accuracy)
-        sem = np.sqrt(accuracy * (1 - accuracy) / len(group)) if len(group) > 0 else 0
-        sem_accuracies['SCiMS'].append(sem)
-
-
-## BeXY
-for read_bin in read_bin_all:
-    group = bexy_merged[bexy_merged['read_bin_category'] == read_bin]
-    if len(group) == 0:
-        accuracies['BeXY'].append(np.nan)
-        sem_accuracies['BeXY'].append(np.nan)
-    else:
-        correct_predictions = group[group['inferred_sex_bexy'] == group['actual_sex']]
-        accuracy = len(correct_predictions) / len(group) if len(group) > 0 else 0
-        accuracies['BeXY'].append(accuracy)
-        sem = np.sqrt(accuracy * (1 - accuracy) / len(group)) if len(group) > 0 else 0
-        sem_accuracies['BeXY'].append(sem)
-
-## Rx
-for read_bin in read_bin_all:
-    group = rxry_merged[rxry_merged['read_bin_category'] == read_bin]
-    if len(group) == 0:
-        accuracies['Rx'].append(np.nan)
-        sem_accuracies['Rx'].append(np.nan)
-    else:
-        correct_predictions = group[group['inferred_sex_Rx'] == group['actual_sex_x']]
-        accuracy = len(correct_predictions) / len(group) if len(group) > 0 else 0
-        accuracies['Rx'].append(accuracy)
-        sem = np.sqrt(accuracy * (1 - accuracy) / len(group)) if len(group) > 0 else 0
-        sem_accuracies['Rx'].append(sem)
-
-## Ry
-for read_bin in read_bin_all:
-    group = rxry_merged[rxry_merged['read_bin_category'] == read_bin]
-    if len(group) == 0:
-        accuracies['Ry'].append(np.nan)
-        sem_accuracies['Ry'].append(np.nan)
-    else:
-        correct_predictions = group[group['inferred_sex_Ry'] == group['actual_sex_x']]
-        accuracy = len(correct_predictions) / len(group) if len(group) > 0 else 0
-        accuracies['Ry'].append(accuracy)
-        sem = np.sqrt(accuracy * (1 - accuracy) / len(group)) if len(group) > 0 else 0
-        sem_accuracies['Ry'].append(sem)
-
-# Build the DataFrame with separate columns for accuracy and uncertainty
-data = {'read_bin': read_bin_all}
-for method in methods:
-    data[f'accuracy_{method}'] = accuracies[method]
-    data[f'SEM_{method}'] = sem_accuracies[method]
-
-accuracy_df = pd.DataFrame(data)
-
-# Convert read_bin to string (or categorical) for consistent plotting
-accuracy_df['read_bin'] = accuracy_df['read_bin'].astype(str)
-
-# Set colors for methods
 colors = {
-    'SCiMS': '#1B9E77',  # Green
-    'BeXY': '#B31529',   # Red
-    'Rx': '#7570B3',     # Purple
-    'Ry': '#BD9E39'      # Yellow-Brown
+    'SCiMS': '#58508f',  # blue
+    'BeXY': '#bd5090',   # pink
+    'Rx': '#ac9546',     # sage green
+    'Ry': '#eddca5'      # light yellow
 }
 
-# Set figure size
-plt.figure(figsize=(5, 5))
+correct = categorization_by_depth[categorization_by_depth['level_1'].str.lower() == 'correct'].copy()
+correct['read_bin_label'] = correct['read_bin_category'].astype(int).astype(str)
 
+plt.figure(figsize=(5, 5))
 # Loop over methods in reverse order for plotting order control
 for method, marker in zip(methods, markers):
-    sns.lineplot(
-        x='read_bin',
-        y=f'accuracy_{method}',
-        data=accuracy_df,
-        marker=marker,
-        linestyle='-',
-        color=colors[method],  # Use pre-defined colors
-        label=method,
-        linewidth=2,  # Thicker line for better visibility
-        markersize=10
-    )
-    
-    # Add error band (SEM)
-    plt.fill_between(
-        accuracy_df['read_bin'],
-        accuracy_df[f'accuracy_{method}'] - accuracy_df[f'SEM_{method}'],
-        accuracy_df[f'accuracy_{method}'] + accuracy_df[f'SEM_{method}'],
-        color=colors[method],
-        alpha=0.2,
-        edgecolor=colors[method]  # Add edge color for better visibility
-    )
-
+  sns.lineplot(data=correct, x='read_bin_label', y=method, marker=marker, markersize=10, label=method, color=colors[method],
+               linewidth=2)
 # Customize plot appearance
 plt.ylim(0, 1.03)
 plt.xlabel('Host Reads', fontsize=12, fontweight='bold')
 plt.ylabel('Proportion of Correct Predictions', fontsize=12, fontweight='bold')
-
 # Improve grid visibility
 plt.grid(True, which='both', linestyle='--', linewidth=0.5, alpha=0.6)
 
@@ -353,42 +208,73 @@ plt.savefig('./figures/fig2B_accuracy.eps', dpi=300, bbox_inches='tight', transp
 
 plt.show()
 
-
 ##########################################################################################################
 # Figure 2C: Bar chart of precision, recall, and F1 score for each method
 
 # Initialize an empty DataFrame to hold all metrics
 all_reports = pd.DataFrame()
 
-# Extract the actual and inferred sexes for each method
-actual_sex = merged_df['actual_sex_x']
+classes  = ['Male', 'Female']
+all_rows = []
+
+# Map of method → Series of predictions (same as you had earlier)
 methods = {
-    'SCiMS': merged_df['SCiMS_sex'],
-    'BeXY': merged_df['inferred_sex_bexy'],
-    'Rx': merged_df['inferred_sex_Rx'],
-    'Ry': merged_df['inferred_sex_Ry']
+    'SCiMS':  merged_df['SCiMS_sex'],
+    'BeXY':   merged_df['inferred_sex_bexy'],
+    'Rx':     merged_df['inferred_sex_Rx'],
+    'Ry':     merged_df['inferred_sex_Ry'],
 }
+actual = merged_df['actual_sex']
 
-# Calculate and store the classification report for each method
-for method, inferred_sex in methods.items():
-    report = classification_report(actual_sex, inferred_sex, labels=['male', 'female'], output_dict=True, zero_division=0)
-    report_df = pd.DataFrame(report).transpose()
-    report_df['method'] = method  # Add a column for the method name
-    all_reports = pd.concat([all_reports, report_df], axis=0)
+for method, preds in methods.items():
+    for cls in classes:
+        # rows that truly belong to this class
+        is_cls = actual == cls
 
-# Reset the index to properly format the DataFrame
-all_reports.reset_index(inplace=True)
-all_reports.rename(columns={'index': 'class'}, inplace=True)
+        # define masks
+        correct   = (preds == actual) & is_cls & preds.isin(classes)
+        incorrect = (preds != actual) & is_cls & preds.isin(classes)
+        uncertain = (~preds.isin(classes)) & is_cls
 
-# Filter out support and accuracy metrics for plotting
-metrics = all_reports[all_reports['class'].isin(['male', 'female'])]
+        n_correct   = correct.sum()
+        n_incorrect = incorrect.sum()
+        n_uncertain = uncertain.sum()
 
-# Define a custom color palette
-color_dict = dict(zip(methods.keys(), colors.values()))
+        prec_den  = n_correct + n_incorrect
+        rec_den   = n_correct + n_incorrect + n_uncertain
+
+        precision = n_correct / prec_den if prec_den > 0 else np.nan
+        recall    = n_correct / rec_den  if rec_den  > 0 else np.nan
+
+        if np.isnan(precision) or np.isnan(recall) or (precision+recall) == 0:
+            f1 = np.nan
+        else:
+            f1 = 2 * precision * recall / (precision + recall)
+
+        all_rows.append({
+            'method':     method,
+            'class':      cls,
+            'precision':  precision,
+            'recall':     recall,
+            'f1-score':   f1,
+            'n_correct':   n_correct,
+            'n_incorrect': n_incorrect,
+            'n_uncertain': n_uncertain,
+        })
+
+# tidy DataFrame for plotting
+metrics = pd.DataFrame(all_rows)
 
 # Set up the figure with 3 vertically stacked bar charts
 fig, axes = plt.subplots(3, 1, figsize=(5, 5), sharex=True)
 
+colors = {
+    'SCiMS': '#58508f',  # blue
+    'BeXY': '#bd5090',   # pink
+    'Rx': '#ac9546',     # sage green
+    'Ry': '#eddca5'      # light yellow
+}
+color_dict = dict(zip(methods.keys(), colors.values()))
 
 # Precision plot
 sns.barplot(x='class', y='precision', hue='method', data=metrics, ax=axes[0], 
