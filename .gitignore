@@ -6,9 +6,7 @@
 01_simulation/mapped_reads/
 .snakemake/
 *.out
-01_simulation/results/
-01_simulation/bexy_output/
-figures/
+
 
 ### Base Python .gitignore
 # Byte-compiled / optimized / DLL files
