@@ -24,7 +24,7 @@ def calculate_Rx_Ry(idxstats_files, scaffold_ids, x_id, y_id, system):
     with open(scaffold_ids, 'r') as f:
         scaffold_ids = f.read().splitlines()
     for idxstats_file in idxstats_files:
-        sample_id = os.path.basename(idxstats_file).split('.')[0]
+        sample_id, ext = os.path.splitext(os.path.basename(idxstats_file))
         idxstats = pd.read_table(idxstats_file, header=None, index_col=0)
         idxstats = idxstats.loc[scaffold_ids]
 
