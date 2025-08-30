@@ -7,3 +7,5 @@ dependencies:
   - snakemake=8.11.3
   - python=3.11
   - wget
+  - pip:
+    - git+https://github.com/hanhntran/SCiMS-v1.1
