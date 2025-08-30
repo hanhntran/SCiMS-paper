@@ -28,6 +28,9 @@ rule index_ref_genomes:
     shell: "bowtie2-build {input} {params}"
 
 rule map_simulated_reads:
+    """
+    Map simulated reads to the reference genome using Bowtie2.
+    """
     input:
         forward_reads=f"{simulated_reads_dir}/S{{sex}}100000000_1.fastq.gz",
         reverse_reads=f"{simulated_reads_dir}/S{{sex}}100000000_2.fastq.gz",
@@ -46,6 +49,10 @@ rule map_simulated_reads:
         """
 
 rule add_read_groups:
+    """
+    Add read groups to the sorted BAM file. Read groups (RG) are required by Picard mark duplicates (next rule). 
+    Because these reads are simulated, I just made up some random values to satisfy the RG requirements.
+    """
     input:
         sorted_bam=f"{map_dir}/S{{sex}}100000000.sorted.bam"
     output:
@@ -72,6 +79,9 @@ rule add_read_groups:
         """
 
 rule mark_duplicates:
+    """
+    Mark duplicates in the sorted BAM file
+    """
     input:
         rg_bam=f"{map_dir}/S{{sex}}100000000.sorted.rg.bam"
     output:

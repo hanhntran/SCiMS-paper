@@ -4,7 +4,7 @@ IDXSTATS_DIR="./04_chicken/mapped_reads"
 
 ls ${IDXSTATS_DIR}/*.1000x.idxstats > chicken_idxstats.txt
 
+chicken_scaffolds="data/ref_genome/chicken_scaffolds.txt"
+
 # run bexy
-./tools/bexy/build/bexy infer  --idxstats simulation_master.txt  --keepScaffolds CM050336.1,CM050337.1,CM050338.1,CM050339.1,CM050340.1,CM050341.1,CM050342.1,CM050343.1,CM050344.1,CM050345.1,CM050346.1,CM050347.1,CM050348.1,CM050349.1,CM050350.1,CM050351.1,CM050352.1,CM050353.1,CM050354.1,CM050355.1,CM050356.1,CM050357.1,CM050358.1,CM050359.1,CM050360.1,CM050361.1,CM050362.1,CM050363.1,CM050364.1,CM050365.1,CM050366.1,CM050367.1,CM050368.1,CM050369.1,CM050370.1,CM050371.1,CM050372.1,CM050373.1,CM050374.1,CM050375.1,CM050376.1
-# generate bexy output in R
-Rscript ./04_chicken/bexy.R
+./tools/bexy/build/bexy infer  --idxstats chicken_idxstats.txt  --keepScaffolds $chicken_scaffolds --maxNumThreads 16
