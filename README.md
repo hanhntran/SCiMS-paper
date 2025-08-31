@@ -106,18 +106,15 @@ chmod +x "$CONDA_PREFIX/bin/bexy"
 
 ```bash
 conda activate bexy
+
 bash 01_simulation/06_simulation_bexy.sh
 ```
 
 ```bash
-conda activate scims-env
+conda update -n bexy -f ./envs/bexy.yaml
+conda activate bexy
 # generate bexy output in R
 Rscript ./scripts/bexy.R
-```
-
-7. Generate the Figure 2:
-```bash
-python3 ./scripts/figure2.py
 ```
 
 ### Part 2: Human Microbiome Project (HMP) dataset
@@ -145,14 +142,10 @@ bash 02_hmp/04_hmp_bexy.sh
 ```
 
 ```bash
-conda activate scims-env
+conda activate bexy
+
 # generate bexy output in R
 Rscript ./scripts/bexy.R
-```
-
-4. Generate the Figure 3:
-```bash
-python3 ./scripts/figure3_A.py
 ```
 
 ### Part 3: Mouse Metagenomic Dataset
@@ -180,14 +173,9 @@ bash 03_mouse/04_mouse_bexy.sh
 ``` 
 
 ```bash
-conda activate scims-env
+conda activate bexy
 # generate bexy output in R
 Rscript ./scripts/bexy.R
-```
-
-4. Generate the Figure 4:
-```bash
-python3 ./scripts/figure3_B.py
 ```
 
 ### Part 4: Chicken Metagenomic Dataset
@@ -215,12 +203,28 @@ bash 04_chicken/04_chicken_bexy.sh
 ```
 
 ```bash
-conda activate scims-env
+conda activate bexy
 # generate bexy output in R
 Rscript ./scripts/bexy.R
 ```
 
-4. Generate the Figure 5:
+### Part 5: Generate figures
+1. Generate the Figure 2:
 ```bash
-python3 ./scripts/figure3_C.py  
+python3 ./scripts/figure2.py
+```
+
+2. Generate the Figure 3A:
+```bash
+python3 ./scripts/figure3_A.py
+```
+
+3. Generate the Figure 3B:
+```bash
+python3 ./scripts/figure3_B.py
+```
+
+4. Generate the Figure 4:
+```bash
+python3 ./scripts/figure4.py
 ```
