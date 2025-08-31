@@ -3,7 +3,6 @@
 # Variables
 THRESHOLD="0.95"
 RXRY_SCRIPT="./scripts/calculate_rxry_script.py"
-#METADATA="./01_simulation/simulation_metadata.tsv"
 SCAFFOLDS="./01_simulation/simulated_ref/GRCh38_scaffolds.txt"
 OUTPUT_DIR="./01_simulation/results"
 IDXSTATS_DIR="./01_simulation/mapped_reads"
@@ -17,7 +16,7 @@ mkdir -p ${OUTPUT_DIR}
 python3 ${RXRY_SCRIPT} \
     --scaffolds ${SCAFFOLDS} \
     --idxstats_dir ${IDXSTATS_DIR} \
-    --system XY \
+    --system ${SYSTEM} \
     --homogametic_id NC_000023.11 \
     --heterogametic_id NC_000024.10 \
     --output ${RXRY_OUTPUT} \
