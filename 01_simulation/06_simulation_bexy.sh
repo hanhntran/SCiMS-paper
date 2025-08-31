@@ -12,5 +12,3 @@ scaffolds="data/ref_genome/GRCh38_scaffolds.txt"
 
 ./tools/bexy/build/bexy infer --idxstats "${OUTPUT_DIR}/simulation_master.txt" --keepScaffolds $scaffolds
 
-# generate bexy output in R
-Rscript ./scripts/bexy.R ${OUTPUT_DIR}/
