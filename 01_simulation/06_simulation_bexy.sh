@@ -3,7 +3,7 @@
 IDXSTATS_DIR="./01_simulation/mapped_reads"
 OUTPUT_DIR="01_simulation/bexy_output"
 
-mkdir ${OUTPUT_DIR}
+mkdir -p ${OUTPUT_DIR}
 
 ls ${IDXSTATS_DIR}/*.1000x.idxstats > ${OUTPUT_DIR}/simulation_master.txt
 
