@@ -94,7 +94,7 @@ BeXY installation guide for Linux: (original intructions can be found [Bexy](htt
 ```bash
 conda create -n bexy
 conda activate bexy
-conda install -c conda-forge gxx=13.2.0 cmake=3.26.3 libblas liblapack
+conda install -n bexy -f ./envs/bexy.yaml
 
 git clone https://bitbucket.org/WegmannLab/bexy.git
 cd bexy
@@ -111,8 +111,6 @@ bash 01_simulation/06_simulation_bexy.sh
 ```
 
 ```bash
-conda update -n bexy -f ./envs/bexy.yaml
-conda activate bexy
 # generate bexy output in R
 Rscript ./scripts/bexy.R
 ```
@@ -137,13 +135,10 @@ bash 02_hmp/03_hmp_rxry.sh
 
 Execute the following commands to run BeXY:
 ```bash
-conda activate bexy
 bash 02_hmp/04_hmp_bexy.sh
 ```
 
 ```bash
-conda activate bexy
-
 # generate bexy output in R
 Rscript ./scripts/bexy.R
 ```
@@ -168,12 +163,10 @@ bash 03_mouse/03_mouse_rxry.sh
 
 Execute the following commands to run BeXY:
 ```bash
-conda activate bexy
 bash 03_mouse/04_mouse_bexy.sh
 ``` 
 
 ```bash
-conda activate bexy
 # generate bexy output in R
 Rscript ./scripts/bexy.R
 ```
@@ -198,12 +191,10 @@ bash 04_chicken/03_chicken_rxry.sh
 
 Execute the following commands to run BeXY:
 ```bash
-conda activate bexy
 bash 04_chicken/04_chicken_bexy.sh
 ```
 
 ```bash
-conda activate bexy
 # generate bexy output in R
 Rscript ./scripts/bexy.R
 ```
