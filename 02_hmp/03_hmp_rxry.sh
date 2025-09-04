@@ -2,8 +2,8 @@
 
 # Variables
 THRESHOLD="0.95"
-RXRY_SCRIPT="./scripts/rxry_script.py"
-SCAFFOLDS="./data/ref_genome/GRCh38_scaffold.txt"
+RXRY_SCRIPT="./scripts/calculate_rxry_script.py"
+SCAFFOLDS="./data/ref_genome/GRCh38_scaffolds.txt"
 OUTPUT_DIR="./02_hmp/results"
 IDXSTATS_DIR="./02_hmp/mapped_reads"
 RXRY_OUTPUT="${OUTPUT_DIR}/hmp_rxry_output.txt"
