@@ -41,7 +41,7 @@ rule index_ref_genome:
     input:
         REF_GENOME
     output:
-        BOWTIE2_INDEX_PREFIX + ".1.bt2"
+        expand(BOWTIE2_INDEX_PREFIX + "{ext}", ext=[".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2", ".rev.1.bt2", ".rev.2.bt2"])
     conda:
         f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell:
