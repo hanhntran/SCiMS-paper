@@ -7,7 +7,10 @@
 .snakemake/
 *.out
 01_simulation/results/
-
+01_simulation/bexy_output/
+figures/
+02_hmp/mapped_reads/
+02_hmp/trimmed_reads/
 
 ### Base Python .gitignore
 # Byte-compiled / optimized / DLL files
