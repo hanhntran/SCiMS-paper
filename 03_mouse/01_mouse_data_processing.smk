@@ -92,9 +92,39 @@ rule map_reads:
         samtools sort -o {output.bam}
         """
 
+rule add_read_groups:
+    """
+    Add read groups to the sorted BAM file. Read groups (RG) are required by Picard mark duplicates (next rule). 
+    Because these reads are simulated, I just made up some random values to satisfy the RG requirements.
+    """
+    input:
+        sorted_bam=f"{mapped_reads_dir}/{{sra}}.sorted.bam"
+    output:
+        rg_bam=f"{mapped_reads_dir}/{{sra}}.sorted.rg.bam"
+    params:
+        RGID="{sra}",
+        RGLB="lib1",
+        RGPL="illumina",
+        RGPU="unit1",
+        RGSM="{sra}"
+    conda:
+        f"{main_dir}/envs/picard.yaml"
+    shell:
+        """
+        picard AddOrReplaceReadGroups \
+            I={input.sorted_bam} \
+            O={output.rg_bam} \
+            RGID={params.RGID} \
+            RGLB={params.RGLB} \
+            RGPL={params.RGPL} \
+            RGPU={params.RGPU} \
+            RGSM={params.RGSM} \
+            CREATE_INDEX=true
+        """
+
 rule remove_duplicates:
     input:
-        bam = f"{mapped_reads_dir}/{{sra}}.sorted.bam"
+        bam = f"{mapped_reads_dir}/{{sra}}.sorted.rg.bam"
     output:
         bam = f"{mapped_reads_dir}/{{sra}}.rmdup.bam",
         metrics = f"{mapped_reads_dir}/{{sra}}.metrics.txt"
