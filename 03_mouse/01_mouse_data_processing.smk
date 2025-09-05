@@ -3,7 +3,7 @@ import os
 main_dir = os.getcwd()
 
 genome_url = "https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/001/635/GCF_000001635.27_GRCm39"
-genome_file = "GCA_000001635.27_GRCm39_genomic.fna.gz"
+genome_file = "GCF_000001635.27_GRCm39_genomic.fna.gz"
 
 # Paths and files
 REF_GENOME = os.path.join(main_dir, "data/ref_genome", "GCF_000001635.27_GRCm39_genomic.fna.gz")
