@@ -3,8 +3,8 @@ IDXSTATS_DIR="./03_mouse/mapped_reads"
 OUTPUT_DIR="./03_mouse/results"
 SCAFFOLDS_FILE="./data/ref_genome/mouse_scaffold.txt"
 METADATA_FILE="./03_mouse/mouse_metadata.tsv"
-X_scaffold="NC_000023.11"
-Y_scaffold="NC_000024.10"
+X_scaffold="NC_000086.8"
+Y_scaffold="NC_000087.8"
 id_colummn="Run"
 
 # Run SCiMS
