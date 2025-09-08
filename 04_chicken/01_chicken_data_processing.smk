@@ -43,7 +43,7 @@ rule index_ref_genome:
     input:
         REF_GENOME
     output:
-        BOWTIE2_INDEX_PREFIX + ".1.bt2"
+        expand(BOWTIE2_INDEX_PREFIX + "{ext}", ext=[".1.bt2", ".2.bt2", ".3.bt2", ".4.bt2", ".rev.1.bt2", ".rev.2.bt2"])
     conda:
         f"{main_dir}/envs/bowtie2_samtools.yaml"
     shell:
@@ -52,7 +52,7 @@ rule index_ref_genome:
 rule download_sra_reads:
     output:
         forward = f"{raw_reads_dir}/{{sra}}_1.fastq.gz",
-        reverse = f"{raw_reads_dir}/{{sra}}_2.fastq.gz"
+        reverse_ = f"{raw_reads_dir}/{{sra}}_2.fastq.gz"
     params:
         sra_id = "{sra}"
     conda:
@@ -63,16 +63,16 @@ rule download_sra_reads:
 rule trim_reads:
     input:
         forward = f"{raw_reads_dir}/{{sra}}_1.fastq.gz",
-        reverse = f"{raw_reads_dir}/{{sra}}_2.fastq.gz"
+        reverse_ = f"{raw_reads_dir}/{{sra}}_2.fastq.gz"
     output:
         forward = f"{trimmed_reads_dir}/{{sra}}_1.trimmed.fastq.gz",
-        reverse = f"{trimmed_reads_dir}/{{sra}}_2.trimmed.fastq.gz"
+        reverse_ = f"{trimmed_reads_dir}/{{sra}}_2.trimmed.fastq.gz"
     conda:
         f"{main_dir}/envs/fastp.yaml"
     shell:
         """
-        fastp -i {input.forward} -I {input.reverse} \
-              -o {output.forward} -O {output.reverse} \
+        fastp -i {input.forward} -I {input.reverse_} \
+              -o {output.forward} -O {output.reverse_} \
               -h {trimmed_reads_dir}/{wildcards.sra}.html \
               -j {trimmed_reads_dir}/{wildcards.sra}.json
         """
@@ -80,7 +80,7 @@ rule trim_reads:
 rule map_reads:
     input:
         forward = f"{trimmed_reads_dir}/{{sra}}_1.trimmed.fastq.gz",
-        reverse = f"{trimmed_reads_dir}/{{sra}}_2.trimmed.fastq.gz",
+        reverse_ = f"{trimmed_reads_dir}/{{sra}}_2.trimmed.fastq.gz",
         index = BOWTIE2_INDEX_PREFIX + ".1.bt2"
     output:
         bam = f"{mapped_reads_dir}/{{sra}}.sorted.bam"
@@ -89,7 +89,7 @@ rule map_reads:
     shell:
         """
         bowtie2 -x {BOWTIE2_INDEX_PREFIX} \
-                -1 {input.forward} -2 {input.reverse} | \
+                -1 {input.forward} -2 {input.reverse_} | \
         samtools view -b -q 30 | \
         samtools sort -o {output.bam}
         """
