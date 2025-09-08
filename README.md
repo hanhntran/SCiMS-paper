@@ -112,7 +112,7 @@ bash 01_simulation/06_simulation_bexy.sh
 
 ```bash
 # generate bexy output in R
-Rscript ./scripts/bexy.R
+Rscript ./scripts/bexy.R ./01_simulation/bexy_output
 ```
 
 ### Part 2: Human Microbiome Project (HMP) dataset
@@ -140,7 +140,7 @@ bash 02_hmp/04_hmp_bexy.sh
 
 ```bash
 # generate bexy output in R
-Rscript ./scripts/bexy.R
+Rscript ./scripts/bexy.R ./02_hmp/results/bexy
 ```
 
 ### Part 3: Mouse Metagenomic Dataset
@@ -168,7 +168,7 @@ bash 03_mouse/04_mouse_bexy.sh
 
 ```bash
 # generate bexy output in R
-Rscript ./scripts/bexy.R
+Rscript ./scripts/bexy.R ./03_mouse/results/bexy
 ```
 
 ### Part 4: Chicken Metagenomic Dataset
@@ -200,22 +200,19 @@ Rscript ./scripts/bexy.R
 ```
 
 ### Part 5: Generate figures
-1. Generate the Figure 2:
+1. Generate figure 2:
 ```bash
 python3 ./scripts/figure2.py
 ```
 
-2. Generate the Figure 3A:
+2. Generate figure 3:
 ```bash
-python3 ./scripts/figure3_A.py
+python3 ./scripts/figure3.py
 ```
 
-3. Generate the Figure 3B:
-```bash
-python3 ./scripts/figure3_B.py
-```
-
-4. Generate the Figure 4:
+3. Generate figure 4:
 ```bash
 python3 ./scripts/figure4.py
+
 ```
+
