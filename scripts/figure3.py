@@ -8,8 +8,8 @@ import os
 
 ##########################################################################################################
 # load file
-scims_file = './02_hmp/results/dbGap_metadata_filtered_scims_updated.txt'
-bexy_file = './02_hmp/results/bexy/hmp_bexy_output_0.95.txt'
+scims_file = './02_hmp/results/dbGap_metadata_scims_updated.txt'
+bexy_file = './02_hmp/results/bexy/bexy_output_0.95.txt'
 rxry_file = './02_hmp/results/hmp_rxry_output.txt'
 
 if not os.path.isdir('./figures'):
