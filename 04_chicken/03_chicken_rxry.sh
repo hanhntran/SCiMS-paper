@@ -2,8 +2,8 @@
 
 # Variables
 THRESHOLD="0.95"
-RXRY_SCRIPT="./scripts/rxry_script.py"
-SCAFFOLDS="./04_chicken/chicken_scaffold.txt"
+RXRY_SCRIPT="./scripts/calculate_rxry_script.py"
+SCAFFOLDS="./data/ref_genome/chicken_scaffolds.txt"
 OUTPUT_DIR="./04_chicken/results"
 IDXSTATS_DIR="./04_chicken/mapped_reads"
 RXRY_OUTPUT="${OUTPUT_DIR}/chicken_rxry_output.txt"
