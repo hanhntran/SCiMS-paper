@@ -3,8 +3,8 @@ IDXSTATS_DIR="./04_chicken/mapped_reads"
 OUTPUT_DIR="./04_chicken/results"
 SCAFFOLDS_FILE="./data/ref_genome/chicken_scaffold.txt"
 METADATA_FILE="./04_chicken/chicken_metadata.tsv"
-Z_scaffold="CM028522.1"
-W_scaffold="CM028521.1"
+Z_scaffold="CM050376.1"
+W_scaffold="CM050375.1"
 id_colummn="Run"
 
 # Run SCiMS
