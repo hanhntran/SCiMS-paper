@@ -8,8 +8,8 @@ import os
 ##########################################################################################################
 # load file
 scims_file = './03_mouse/results/mouse_metadata_scims_updated.txt'
-bexy_file = './03_mouse/bexy_output/mouse_bexy_output_0.95.txt'
-rxry_file = './03_mouse/mouse_rxry_output.txt'
+bexy_file = './03_mouse/results/bexy/bexy_output_0.95.txt'
+rxry_file = './03_mouse/results/mouse_rxry_output.txt'
 
 
 scims = pd.read_csv(scims_file, sep="\t")
