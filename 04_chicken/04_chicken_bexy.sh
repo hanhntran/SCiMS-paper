@@ -1,10 +1,13 @@
 #!/bin/bash
 
 IDXSTATS_DIR="./04_chicken/mapped_reads"
+OUTPUT_DIR="./04_chicken/results/bexy"
 
-ls ${IDXSTATS_DIR}/*.idxstats > chicken_idxstats.txt
+mkdir -p ${OUTPUT_DIR}
+
+ls ${IDXSTATS_DIR}/*.idxstats > ${OUTPUT_DIR}/chicken_idxstats.txt
 
 chicken_scaffolds="data/ref_genome/chicken_scaffolds.txt"
 
 # run bexy
-./tools/bexy/build/bexy infer  --idxstats chicken_idxstats.txt  --keepScaffolds $chicken_scaffolds --maxNumThreads 16
+./tools/bexy/build/bexy infer  --idxstats ${OUTPUT_DIR}/chicken_idxstats.txt  --keepScaffolds $chicken_scaffolds --maxNumThreads 16
