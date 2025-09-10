@@ -2,7 +2,7 @@
 
 IDXSTATS_DIR="./04_chicken/mapped_reads"
 
-ls ${IDXSTATS_DIR}/*.1000x.idxstats > chicken_idxstats.txt
+ls ${IDXSTATS_DIR}/*.idxstats > chicken_idxstats.txt
 
 chicken_scaffolds="data/ref_genome/chicken_scaffolds.txt"
 
