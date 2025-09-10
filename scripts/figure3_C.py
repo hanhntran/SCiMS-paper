@@ -8,8 +8,8 @@ import os
 ##########################################################################################################
 # load file
 scims_file = "./04_chicken/results/chicken_metadata_scims_updated.txt"
-rxry_file = "./04_chicken/chicken_rxry_output.txt"
-bexy_file = "./04_chicken/bexy_output/chicken_bexy_output.txt"
+rxry_file = "./04_chicken/results/chicken_rxry_output.txt"
+bexy_file = "./04_chicken/results/bexy/bexy_output_0.95.txt"
 
 scims = pd.read_csv(scims_file, sep="\t")
 scims.rename(columns={'Run': 'Sample'}, inplace=True)
