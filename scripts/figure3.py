@@ -27,7 +27,7 @@ rxry_merged = pd.merge(sub_cols, rxry, on="Sample")
 
 # Modify the 'Sample' column: remove '.sorted' and replace '_' with ''
 bexy = pd.read_csv(bexy_file, sep="\t")
-bexy.rename(columns={'Run': 'Sample'}, inplace=True)
+bexy.rename(columns={'sample': 'Sample'}, inplace=True)
 bexy['Sample'] = bexy['Sample'].str.replace('.sorted', '')
 bexy_merged = pd.merge(sub_cols, bexy, on="Sample")
 
