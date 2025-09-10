@@ -10,5 +10,5 @@ ls ${IDXSTATS_DIR}/*.1000x.idxstats > ${OUTPUT_DIR}/simulation_master.txt
 # run bexy
 scaffolds="data/ref_genome/GRCh38_scaffolds.txt"
 
-./tools/bexy/build/bexy infer --idxstats "${OUTPUT_DIR}/simulation_master.txt" --keepScaffolds $scaffolds
+bexy infer --idxstats "${OUTPUT_DIR}/simulation_master.txt" --keepScaffolds $scaffolds
 
