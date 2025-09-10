@@ -8,8 +8,8 @@ import os
 ##########################################################################################################
 # load file
 scims_file = "./04_chicken/results/chicken_metadata_scims_updated.txt"
-rxry_file = "./04_chicken/chicken_rxry_output.txt"
-bexy_file = "./04_chicken/bexy_output/chicken_bexy_output.txt"
+rxry_file = "./04_chicken/results/chicken_rxry_output.txt"
+bexy_file = "./04_chicken/results/bexy/bexy_output_0.95.txt"
 
 scims = pd.read_csv(scims_file, sep="\t")
 scims.rename(columns={'Run': 'Sample'}, inplace=True)
@@ -44,13 +44,13 @@ inferred_sex_Rx = []
 for index, row in rxry_merged.iterrows():
     try:
         # Check if the value is a string before applying strip
-        if isinstance(row['Rx 95% CI'], str):
-            ci_low_rx, ci_high_rx = map(float, row['Rx 95% CI'].strip('()').split(', '))
+        if isinstance(row['Rz 95% CI'], str):
+            ci_low_rx, ci_high_rx = map(float, row['Rz 95% CI'].strip('()').split(', '))
         # If it's already a float (or any numeric type), assume it's a single value
-        elif isinstance(row['Rx 95% CI'], (int, float)):
-            ci_low_rx = ci_high_rx = row['Rx 95% CI']  # Assuming single value CI
+        elif isinstance(row['Rz 95% CI'], (int, float)):
+            ci_low_rx = ci_high_rx = row['Rz 95% CI']  # Assuming single value CI
         else:
-            raise ValueError("Unexpected data type for 'Rx 95% CI'")
+            raise ValueError("Unexpected data type for 'Rz 95% CI'")
 
         if ci_low_rx > 0.8:
             inferred_sex_Rx.append('female')
@@ -67,13 +67,13 @@ inferred_sex_Ry = []
 for index, row in rxry_merged.iterrows():
     try:
         # Check if the value is a string before applying strip
-        if isinstance(row['Ry 95% CI'], str):
-            ci_low_ry, ci_high_ry = map(float, row['Ry 95% CI'].strip('()').split(', '))
+        if isinstance(row['Rw 95% CI'], str):
+            ci_low_ry, ci_high_ry = map(float, row['Rw 95% CI'].strip('()').split(', '))
         # If it's already a float (or any numeric type), assume it's a single value
-        elif isinstance(row['Ry 95% CI'], (int, float)):
-            ci_low_ry = ci_high_ry = row['Ry 95% CI']  # Assuming single value CI
+        elif isinstance(row['Rw 95% CI'], (int, float)):
+            ci_low_ry = ci_high_ry = row['Rw 95% CI']  # Assuming single value CI
         else:
-            raise ValueError("Unexpected data type for 'Ry 95% CI'")
+            raise ValueError("Unexpected data type for 'Rw 95% CI'")
 
         if ci_low_ry > 0.077:
             inferred_sex_Ry.append('male')
