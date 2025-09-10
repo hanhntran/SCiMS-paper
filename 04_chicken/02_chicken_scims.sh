@@ -5,7 +5,7 @@ SCAFFOLDS_FILE="./data/ref_genome/chicken_scaffolds.txt"
 METADATA_FILE="./04_chicken/chicken_metadata.tsv"
 Z_scaffold="CM050376.1"
 W_scaffold="CM050375.1"
-id_colummn="Run"
+id_column="Run"
 
 # Run SCiMS
 scims \
