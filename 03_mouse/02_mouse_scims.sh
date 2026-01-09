@@ -1,11 +1,11 @@
 #!/bin/bash
 IDXSTATS_DIR="./03_mouse/mapped_reads"
 OUTPUT_DIR="./03_mouse/results"
-SCAFFOLDS_FILE="./data/ref_genome/mouse_scaffold.txt"
+SCAFFOLDS_FILE="./data/ref_genome/mouse_scaffolds.txt"
 METADATA_FILE="./03_mouse/mouse_metadata.tsv"
 X_scaffold="NC_000086.8"
 Y_scaffold="NC_000087.8"
-id_colummn="Run"
+id_column="Run"
 
 # Run SCiMS
 scims \
