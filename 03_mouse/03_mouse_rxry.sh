@@ -2,8 +2,8 @@
 
 # Variables
 THRESHOLD="0.95"
-RXRY_SCRIPT="./scripts/rxry_script.py"
-SCAFFOLDS="./03_mouse/mouse_scaffold.txt"
+RXRY_SCRIPT="./scripts/calculate_rxry_script.py"
+SCAFFOLDS="./data/ref_genome/mouse_scaffolds.txt"
 OUTPUT_DIR="./03_mouse/results"
 IDXSTATS_DIR="./03_mouse/mapped_reads"
 RXRY_OUTPUT="${OUTPUT_DIR}/mouse_rxry_output.txt"
