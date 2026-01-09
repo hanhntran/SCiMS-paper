@@ -3,11 +3,11 @@
 # Set directories consistent with Snakefile outputs
 IDXSTATS_DIR="./02_hmp/mapped_reads"
 OUTPUT_DIR="./02_hmp/results"
-SCAFFOLDS_FILE="./data/ref_genome/GRCh38_scaffold.txt"
+SCAFFOLDS_FILE="./data/ref_genome/GRCh38_scaffolds.txt"
 METADATA_FILE="./02_hmp/dbGap_metadata.txt"
 X_scaffold="NC_000023.11"
 Y_scaffold="NC_000024.10"
-id_colummn="Run"
+id_column="Run"
 
 # Run SCiMS
 scims \
