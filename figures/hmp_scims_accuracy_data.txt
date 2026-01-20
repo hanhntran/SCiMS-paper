@@ -1,0 +1,5 @@
+Host_site	total_count	SCiMS_sex_correct_count	SCiMS_sex_incorrect_count	SCiMS_sex_uncertain_count	SCiMS_sex_accuracy	SCiMS_sex_uncertain_rate	Sample_size
+Anterior nares	709	531	5	173	0.7489421720733427	0.24400564174894218	709
+Oral cavity	493	397	5	91	0.8052738336713996	0.1845841784989858	493
+Stool	93	67	13	13	0.7204301075268817	0.13978494623655913	93
+Vagina	44	29	1	14	0.6590909090909091	0.3181818181818182	44
