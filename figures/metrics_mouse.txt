@@ -1,0 +1,9 @@
+method	class	precision	recall	f1-score	n_correct	n_incorrect	n_uncertain
+SCiMS	Male	1.0	1.0	1.0	23	0	0
+SCiMS	Female	1.0	1.0	1.0	88	0	0
+BeXY	Male	1.0	1.0	1.0	23	0	0
+BeXY	Female	1.0	0.9545454545454546	0.9767441860465117	84	0	4
+Rx	Male	1.0	1.0	1.0	23	0	0
+Rx	Female	0.9473684210526315	0.8571428571428571	0.9	72	4	12
+Ry	Male		0.0		0	0	23
+Ry	Female	1.0	1.0	1.0	88	0	0
