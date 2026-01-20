@@ -205,3 +205,5 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 .DS_Store
+03_mouse/.DS_Store
+/03_mouse
