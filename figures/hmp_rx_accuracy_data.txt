@@ -1,0 +1,5 @@
+Host_site	total_count	inferred_sex_Rx_correct_count	inferred_sex_Rx_incorrect_count	inferred_sex_Rx_uncertain_count	inferred_sex_Rx_accuracy	inferred_sex_Rx_uncertain_rate	Sample_size
+Anterior nares	709	121	4	584	0.17066290550070523	0.8236953455571228	709
+Oral cavity	493	217	4	272	0.44016227180527384	0.5517241379310345	493
+Stool	93	36	3	54	0.3870967741935484	0.5806451612903226	93
+Vagina	44	8	1	35	0.18181818181818182	0.7954545454545454	44
