@@ -110,7 +110,7 @@ for method, preds in methods.items():
         n_uncertain = uncertain.sum()
 
         prec_den  = n_correct + n_incorrect
-        rec_den   = n_correct + n_incorrect + n_uncertain
+        rec_den   = n_correct + n_uncertain
 
         precision = n_correct / prec_den if prec_den > 0 else np.nan
         recall    = n_correct / rec_den  if rec_den  > 0 else np.nan
@@ -151,9 +151,9 @@ def calculate_accuracy(
         row = {group_col: grp_val, 'total_count': total}
         for m in methods:
             # Count categories
-            uncertain = (grp[m] == 'uncertain').sum()
-            # only count as correct if it's not 'uncertain' AND matches sex_col
-            correct   = ((grp[m] == grp[sex_col]) & (grp[m] != 'uncertain')).sum()
+            is_uncertain = grp[m].str.lower() == 'uncertain'
+            uncertain = is_uncertain.sum()          
+            correct   = ((grp[m] == grp[sex_col]) & ~is_uncertain).sum()
             incorrect = total - correct - uncertain
 
             # save
@@ -258,7 +258,7 @@ fig = plt.figure(figsize=(6.69, 5.5))
 gs = gridspec.GridSpec(2, 3, height_ratios=[1, 2])  # 2 rows, 3 columns
 
 # === Panel A: Stacked Horizontal Bar Chart ===
-ax_top = plt.subplot(gs[0, :])  # Top row spans all 3 columns
+ax_top = plt.subplot(gs[0, :]) 
 bar_height = 0.5
 
 # Plot bar chart
@@ -334,10 +334,9 @@ for i, met in enumerate(['precision', 'recall', 'f1-score']):
     if i != 0:
         ax.get_legend().remove()
 
-    # ── make every axis square ───────────────────────────────────────
-    try:                              # Matplotlib ≥3.4
+    try:                             
         ax.set_box_aspect(1)
-    except AttributeError:            # fallback for older versions
+    except AttributeError:            
             ax.set_aspect("equal", adjustable="box")
 
 # Shared legend
