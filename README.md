@@ -180,10 +180,11 @@ Table 1 in the manuscript).
 
 ```bash
 # replace <dir> and <name> with the dataset below
-bash <dir>/01_<name>_data_processing.sh
-bash <dir>/02_<name>_scims.sh
-bash <dir>/03_<name>_rxry.sh
-bash <dir>/04_<name>_bexy.sh
+bash <dir>/01_download_sra.sh
+bash <dir>/02_map_reads.sh
+bash <dir>/02_scims.sh
+bash <dir>/03_rxry.sh
+bash <dir>/04_bexy.sh
 Rscript ./scripts/bexy.R ./<dir>/results/bexy
 ```
 
