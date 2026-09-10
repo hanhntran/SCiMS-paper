@@ -2,95 +2,66 @@
 
 This repository contains reproducible scripts for the SCiMS manuscript.
 
-The associated preprint will be added to the repository once it is published.
+This repository contains the pipelines used to generate
+every analysis and figure in the paper. The tool itself lives at
+[davenport-lab/SCiMS](https://github.com/davenport-lab/SCiMS)
 
-<!-- TOC start -->
+> **Preprint / paper:** [https://www.biorxiv.org/content/10.64898/2026.02.17.705110v2.full](https://www.biorxiv.org/content/10.64898/2026.02.17.705110v2.full)
 
-### Contents:
-- [Environment setup](#environment-setup)
-- [Part 1: Simulation](#part-1-simulation)
-- [Part 2: Human Microbiome Project (HMP) dataset](#part-2-human-microbiome-project-hmp-dataset)
-- [Part 3: Mouse Metagenomic Dataset](#part-3-mouse-metagenomic-dataset)
-- [Part 4: Chicken Metagenomic Dataset](#part-4-chicken-metagenomic-dataset)
-- [References](#references)
+---
 
-<!-- TOC end -->
+## Repository layout
+
+
+| Directory                 | Contents                                                                           |
+| ------------------------- | ---------------------------------------------------------------------------------- |
+| `01_simulation/`          | CAMI-based simulations: read generation, mapping, downsampling, and all four tools |
+| `02_hmp/`                 | Human Microbiome Project (four body sites), raw reads via dbGaP controlled access  |
+| `02a_indian_metagenomes/` | Indian gut metagenomes (PRJNA397112), raw deposit                                  |
+| `02b_hadza_metagenomes/`  | Hadza gut metagenomes (PRJEB49206), host-depleted deposit                          |
+| `03_mouse/`               | Mouse metagenomes                                                                  |
+| `04_chicken/`             | Chicken metagenomes (ZW sex-determination system)                                  |
+| `05_baboon/`              | Baboon metagenomes                                                                 |
+| `06_black_rhino/`         | Black rhino metagenomes                                                            |
+| `07_cow/`                 | Cattle metagenomes                                                                 |
+| `08_mesquite_lizard/`     | Mesquite lizard metagenomes                                                        |
+| `09_pig/`                 | Pig metagenomes                                                                    |
+| `data/`                   | Reference genomes, metadata tables, and intermediate outputs                       |
+| `envs/`                   | Conda environment specifications                                                   |
+| `figure_scripts/`         | Scripts that generate the main and supplementary figures                           |
+
+
+
 
 ### Environment setup
+
 1. Clone the repository
+
 ```bash
 git clone https://github.com/hanhntran/SCiMS-paper.git
 cd SCiMS-paper
 ```
 
-2. Install mamba: if you haven't installed mamba yet, use the following command to install it:
+1. Install mamba: if you haven't installed mamba yet, use the following command to install it:
+
 ```bash
 conda install -y -c conda-forge -c bioconda mamba
 ```
 
-3. Create and activate the conda environment:
+1. Create and activate the conda environment:
+
 ```bash
 mamba env create -n scims-env -f ./envs/environment.yaml
 mamba activate scims-env
 ```
 
-### Part 1: Simulation
-1. Generate the simulation data:
-```bash
-snakemake -s 01_simulation/01_simulation_create_reads.smk --cores 4 --use-conda
-```
-Expected outputs:
-- Simulated reference genomes (male and female) in `./data/simulated_ref`
-- Simulated FASTQ reads in `./data/simulated_reads`
 
-2. Map simulated reads and process BAM files:
 
-```bash
-snakemake -s 01_simulation/02_simulation_map_and_process_simulated_reads.smk --cores 4 --use-conda
-```
-Expected outputs:
-- Sorted, indexed, and duplicate-removed BAM files (sorted.rmdup.bam) in `./data/mapped_reads`
+#### BeXY
 
-3. Downsample the BAM files:
-```bash
-snakemake -s 01_simulation/03_simulation_downsample_reads.smk --cores 4 --use-conda
-```
-> [!WARNING] 
-> The downsampling step will generate ~72,000 files and will take several days to complete and memory-intensive (~300GB). \
-> Alternatively, you can run this pipeline in parallel using a Snakemake plugin 'snakemake-executor-plugin-slurm`. \
-> For example, to run the pipeline in parallel, you can use the following commands. With these settings, the pipeline will run in parallel on ~25 jobs, and each job will take 3-4 hours to complete.
+BeXY is compiled separately (original instructions:
+[BeXY installation](https://bitbucket.org/wegmannlab/bexy/wiki/Installation)):
 
-```bash
-pip install snakemake-executor-plugin-slurm
-
-snakemake -s 01_simulation/03_simulation_downsample_reads.smk \
-          --executor cluster-generic \
-          --cluster-generic-submit-cmd "sbatch --partition=open --account=open --time=12:00:00 --nodes=1 --ntasks=1 --mem=20GB" \
-          --jobs 60 \
-          --groups downsample_bam=group_03 index_downsampled_bam=group_03 generate_idxstats=group_03 \
-          --group-components group_03=60 \
-          --rerun-incomplete \
-          --latency-wait 60 
-```
-
-Expected outputs:
-- Downsampled BAM files (*.1000x.bam) in `./data/mapped_reads`
-- Index stats files (*.1000x.idxstats) in `./data/mapped_reads`
-
-4. Run SCiMS on downsampled simulated data:
-```bash
-bash 01_simulation/04_simulation_scims.sh
-```
-
-5. Run Rx, Ry, and BeXY on downsampled simulated data:
-Execute the following commands to run Rx, Ry:
-```bash
-bash 01_simulation/05_simulation_rxry.sh
-```
-
-Execute the following commands to run BeXY:
-
-BeXY installation guide for Linux: (original intructions can be found [Bexy](https://bitbucket.org/wegmannlab/bexy/wiki/Installation))
 ```bash
 conda create -n bexy
 conda activate bexy
@@ -104,115 +75,151 @@ cp ./build/bexy "$CONDA_PREFIX/bin"
 chmod +x "$CONDA_PREFIX/bin/bexy"
 ```
 
-```bash
-conda activate bexy
 
-bash 01_simulation/06_simulation_bexy.sh
+
+### Part 1: Simulation
+
+1. Generate simulated reads:
+
+```bash
+bash 01_simulation/01_generate_host_reads.sh
 ```
 
+Outputs: simulated male and female reference genomes in `./data/simulated_ref`,
+simulated FASTQ reads in `./data/simulated_reads`.
+
+1. Downsample host reads into different read depths:
+
 ```bash
-# generate bexy output in R
+bash 01_simulation/02_downsample_reads.sh
+```
+
+1. Mix in microbial reads from CAMI simulation oral sample:
+
+```bash
+bash 01_simulation/03_mix_host_cami.sh
+```
+
+1. Map host reads back to human genome
+
+```bash
+bash 01_simulation/04_map_mixed_reads.sh
+```
+
+1. Run the four tools:
+
+```bash
+bash 01_simulation/scims_hg38.sh     # SCiMS
+bash 01_simulation/05_simulation_rxry.sh      # Rx and Ry
+
+conda activate bexy
+bash 01_simulation/run_bexy.sh      # BeXY
 Rscript ./scripts/bexy.R ./01_simulation/bexy_output
 ```
 
-### Part 2: Human Microbiome Project (HMP) dataset
 
-1. Download the HMP dataset and map reads to the reference genomes:
-```bash
-snakemake -s 02_hmp/01_hmp_data_processing.smk --cores 4 --use-conda
-```
 
-2. Run SCiMS on HMP dataset:
-```bash
-snakemake -s 02_hmp/02_hmp_scims.smk --cores 4 --use-conda
-```
+## Part 2: Human cohorts
 
-3. Run Rx, Ry, and BeXY on HMP dataset:
-Execute the following commands to run Rx, Ry:
+
+
+### 2a. Human Microbiome Project
+
+Requires approved dbGaP access (phs000228); raw reads are used prior to host-read
+screening.
+
 ```bash
+bash 02_hmp/01_download_sra.sh
+bash 02_hmp/02_map_reads.sh
+bash 02_hmp/02_hmp_scims
 bash 02_hmp/03_hmp_rxry.sh
-``` 
-
-Execute the following commands to run BeXY:
-```bash
 bash 02_hmp/04_hmp_bexy.sh
-```
-
-```bash
-# generate bexy output in R
 Rscript ./scripts/bexy.R ./02_hmp/results/bexy
 ```
 
-### Part 3: Mouse Metagenomic Dataset
 
-1. Download the mouse metagenomic dataset and map reads to the reference genomes:
+
+### 2b. Indian gut metagenomes (PRJNA397112)
+
 ```bash
-snakemake -s 03_mouse/01_mouse_data_processing.smk --cores 4 --use-conda
+bash 02a_indian_metagenomes/01_download_sra.sh
+bash 02a_indian_metagenomes/02_map_reads.sh
+bash 02a_indian_metagenomes/02_scims.sh
+bash 02a_indian_metagenomes/03_rxry.sh
+bash 02a_indian_metagenomes/04_bexy.sh
+Rscript ./scripts/bexy.R ./02a_indian_metagenomes/results/bexy
 ```
 
-2. Run SCiMS on mouse metagenomic dataset:
+
+
+### 2c. Hadza gut metagenomes (PRJEB49206)
+
+The public deposit for this cohort is host-depleted (see
+[note above](#a-note-on-host-read-filtering)). It is analyzed to characterize the
+effect of host-read removal on sex inference, not as an intended-use benchmark.
+
 ```bash
-snakemake -s 03_mouse/02_mouse_scims.smk --cores 4 --use-conda
+bash 02b_hadza_metagenomes/01_download_sra.sh
+bash 02b_hadza_metagenomes/02_map_reads.sh
+bash 02b_hadza_metagenomes/02_scims.sh
+bash 02b_hadza_metagenomes/03_rxry.sh
+bash 02b_hadza_metagenomes/04_bexy.sh
+Rscript ./scripts/bexy.R ./02b_hadza_metagenomes/results/bexy
 ```
 
-3. Run Rx, Ry, and BeXY on mouse metagenomic dataset:
-Execute the following commands to run Rx, Ry:
-```bash
-bash 03_mouse/03_mouse_rxry.sh
-``` 
+---
 
-Execute the following commands to run BeXY:
-```bash
-bash 03_mouse/04_mouse_bexy.sh
-``` 
+
+
+## Part 3: Non-human hosts
+
+The same four-step pattern applies to each species. Chicken uses a ZW
+sex-determination system; species without a chromosome-level reference assembly with
+annotated sex chromosomes were mapped to a closely related species' genome (see
+Table 1 in the manuscript).
 
 ```bash
-# generate bexy output in R
-Rscript ./scripts/bexy.R ./03_mouse/results/bexy
+# replace <dir> and <name> with the dataset below
+bash <dir>/01_<name>_data_processing.sh
+bash <dir>/02_<name>_scims.sh
+bash <dir>/03_<name>_rxry.sh
+bash <dir>/04_<name>_bexy.sh
+Rscript ./scripts/bexy.R ./<dir>/results/bexy
 ```
 
-### Part 4: Chicken Metagenomic Dataset
 
-1. Download the chicken metagenomic dataset and map reads to the reference genomes:
-```bash
-snakemake -s 04_chicken/01_chicken_data_processing.smk --cores 4 --use-conda
-```
+| `<dir>`              | `<name>`          | Species                |
+| -------------------- | ----------------- | ---------------------- |
+| `03_mouse`           | `mouse`           | *Mus musculus*         |
+| `04_chicken`         | `chicken`         | *Gallus gallus* (ZW)   |
+| `05_baboon`          | `baboon`          | *Papio* spp.           |
+| `06_black_rhino`     | `black_rhino`     | *Diceros bicornis*     |
+| `07_cow`             | `cow`             | *Bos taurus*           |
+| `08_mesquite_lizard` | `mesquite_lizard` | *Sceloporus grammicus* |
+| `09_pig`             | `pig`             | *Sus domesticus*       |
 
-2. Run SCiMS on chicken metagenomic dataset:
-```bash
-snakemake -s 04_chicken/02_chicken_scims.smk --cores 4 --use-conda
-```
 
-3. Run Rx, Ry, and BeXY on chicken metagenomic dataset:
-Execute the following commands to run Rx, Ry:
-```bash
-bash 04_chicken/03_chicken_rxry.sh
-```
+---
 
-Execute the following commands to run BeXY:
-```bash
-bash 04_chicken/04_chicken_bexy.sh
-```
+
+
+## Part 4: Figures
 
 ```bash
-# generate bexy output in R
-Rscript ./scripts/bexy.R
+python3 ./figure_scripts/figure2.py    # simulation benchmarking
+python3 ./figure_scripts/figure3.py    # human cohort benchmarking
+python3 ./figure_scripts/figure4.py    # cross-species benchmarking
 ```
 
-### Part 5: Generate figures
-1. Generate figure 2:
+Supplementary figures:
+
 ```bash
-python3 ./scripts/figure2.py
+python3 ./figure_scripts/supp_fig_yfrac_by_sex_fecal.py \
+    --hmp   data/dbGap_metadata_scims_updated_fecal.txt \
+    --india data/indian_metadata_scims_updated.txt \
+    --hadza data/hadza_PRJEB49206_metadata_scims_updated_filt.txt \
+    --out   figures/Fig_S3_yfrac_by_sex_fecal
 ```
 
-2. Generate figure 3:
-```bash
-python3 ./scripts/figure3.py
-```
-
-3. Generate figure 4:
-```bash
-python3 ./scripts/figure4.py
-
-```
+---
 
